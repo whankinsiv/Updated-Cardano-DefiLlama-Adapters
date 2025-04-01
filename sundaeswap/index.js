@@ -1,28 +1,12 @@
-const { getAssets } = require("../helper/chain/cardano/blockfrost");
+// SundaeSwap V2
+const { sumTokens2 } = require("../helper/chain/cardano");
+const lockedAssetsAddresses = ["addr1w9qzpelu9hn45pefc0xr4ac4kdxeswq7pndul2vuj59u8tqaxdznu", "addr1wxaptpmxcxawvr3pzlhgnpmzz3ql43n2tc8mn3av5kx0yzs09tqh8"]
 
 async function tvl() {
-    const [ammLockedAssets, orderBookLockedAssets] = await Promise.all([
-        getAssets("addr1w9qzpelu9hn45pefc0xr4ac4kdxeswq7pndul2vuj59u8tqaxdznu"),
-        getAssets("addr1wxaptpmxcxawvr3pzlhgnpmzz3ql43n2tc8mn3av5kx0yzs09tqh8"),
-    ]);
-
-    // Merge the two arrays and sum quantities for duplicate units
-    const combinedAssets = [...ammLockedAssets, ...orderBookLockedAssets].reduce((acc, asset) => {
-        const existingAsset = acc.find(a => a.unit === asset.unit);
-        if (existingAsset) {
-            existingAsset.quantity = (Number(existingAsset.quantity) + Number(asset.quantity)).toString();
-        } else {
-            acc.push({ ...asset });
-        }
-        return acc;
-    }, []);
-
-    const formattedData = combinedAssets.reduce((result, item) => {
-        result[`cardano:${item.unit}`] = item.quantity;
-        return result;
-    }, {});
-
-    return formattedData
+    const lockedAssets = await sumTokens2({
+        owners: lockedAssetsAddresses
+    })
+    return lockedAssets
 }
 
 module.exports = {
