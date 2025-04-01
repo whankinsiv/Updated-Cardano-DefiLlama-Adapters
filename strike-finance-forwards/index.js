@@ -33,10 +33,10 @@ async function tvl() {
     // Get position tx hash and output index
     const positionsTxHashes = allPositions.forwards.map(({ outRef }) => outRef);
 
-    // Get contract addresses from tx outputs
+    // Get unique contract addresses from tx outputs
     const uniqueContractAddresses = [...new Set(await fetchContractAddresses(positionsTxHashes))];
 
-    // Get addresses from the unique contract addresses
+    // Get assets from the unique contract addresses
     const formattedAssets = await sumTokens2({
         owners: uniqueContractAddresses
     });
